@@ -8,7 +8,7 @@ export interface IConstructorState {
 
 export const initialState: IConstructorState = {
   bun: null,
-  ingredients: [],
+  ingredients: []
 };
 
 const constructorSlice = createSlice({
@@ -27,11 +27,12 @@ const constructorSlice = createSlice({
     removeIngredient: (state, action: PayloadAction<string>) => {
       const id = action.payload;
 
-      state.ingredients = state.ingredients.filter(
-        (item) => item.id !== id
-      );
+      state.ingredients = state.ingredients.filter((item) => item.id !== id);
     },
-    moveIngredient: (state, action: PayloadAction<{ from: number; to: number} >) => {
+    moveIngredient: (
+      state,
+      action: PayloadAction<{ from: number; to: number }>
+    ) => {
       const { from, to } = action.payload;
 
       const ingredients = [...state.ingredients];
@@ -41,9 +42,19 @@ const constructorSlice = createSlice({
       ingredients.splice(to, 0, movedIngredient);
 
       state.ingredients = ingredients;
+    },
+    clearConstructor: (state) => {
+      state.bun = null;
+      state.ingredients = [];
     }
   }
 });
 
-export const { addIngredient, removeIngredient, moveIngredient } = constructorSlice.actions;
+export const {
+  addIngredient,
+  removeIngredient,
+  moveIngredient,
+  clearConstructor
+} = constructorSlice.actions;
+
 export default constructorSlice.reducer;

@@ -5,7 +5,7 @@ import { IngredientDetailsUI } from '../ui/ingredient-details';
 import { useParams } from 'react-router-dom';
 import { useSelector } from '../../services/store';
 import {
-  selectAllIngredients,
+  selectIngredients,
   selectIngredientsError,
   selectIngredientsLoading
 } from '../../services/selectors/ingredientsSelector';
@@ -13,7 +13,7 @@ import {
 export const IngredientDetails: FC = () => {
   const { id } = useParams<{ id: string }>();
 
-  const ingredients = useSelector(selectAllIngredients);
+  const ingredients = useSelector(selectIngredients);
   const isLoading = useSelector(selectIngredientsLoading);
   const error = useSelector(selectIngredientsError);
 

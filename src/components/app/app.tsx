@@ -15,7 +15,7 @@ import styles from './app.module.css';
 
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import { useEffect } from 'react';
-import { useDispatch } from '../../services/store';
+import { useDispatch, useSelector } from '../../services/store';
 import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 import { ProtectedRoute } from '../protected-route';
 
@@ -25,7 +25,8 @@ const App = () => {
 
   useEffect(() => {
     dispatch(fetchIngredients());
-  }, [dispatch]);
+  }, [dispatch]);``
+
 
   return (
     <div className={styles.app}>
@@ -37,7 +38,7 @@ const App = () => {
         <Route
           path='/feed/:number'
           element={
-            <Modal title='' onClose={() => navigate(-1)}>
+            <Modal title='Детали заказа' onClose={() => navigate('/feed')}>
               <OrderInfo />
             </Modal>
           }
@@ -45,7 +46,7 @@ const App = () => {
         <Route
           path='/ingredients/:id'
           element={
-            <Modal title='Детали ингрeдиента' onClose={() => navigate(-1)}>
+            <Modal title='Детали ингрeдиента' onClose={() => navigate('/')}>
               <IngredientDetails />
             </Modal>
           }
@@ -69,7 +70,7 @@ const App = () => {
         <Route
           path='/forgot-password'
           element={
-            <ProtectedRoute>
+            <ProtectedRoute onlyUnAuth>
               <ForgotPassword />
             </ProtectedRoute>
           }
@@ -77,7 +78,7 @@ const App = () => {
         <Route
           path='/reset-password'
           element={
-            <ProtectedRoute>
+            <ProtectedRoute onlyUnAuth>
               <ResetPassword />
             </ProtectedRoute>
           }
@@ -102,7 +103,7 @@ const App = () => {
           path='/profile/orders/:number'
           element={
             <ProtectedRoute>
-              <Modal title='' onClose={() => navigate(-1)}>
+              <Modal title='Детали заказа' onClose={() => navigate('/profile/orders')}>
                 <OrderInfo />
               </Modal>
             </ProtectedRoute>

@@ -1,11 +1,7 @@
 import { ReactElement } from 'react';
 import { useSelector } from '../../services/store';
 import { Navigate, useLocation } from 'react-router-dom';
-import {
-  selectIsAuthChecked,
-  selectIsAuthenticated
-} from '../../services/selectors/userSelector';
-import { Preloader } from '@ui';
+import { selectIsAuthenticated } from '../../services/selectors/userSelector';
 
 type ProtectedRouteProps = {
   children: ReactElement; // Компонент, который нужно защитить
@@ -16,7 +12,7 @@ export const ProtectedRoute = ({ children, onlyUnAuth = false }: ProtectedRouteP
   const location = useLocation();
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
-  // Действие для атворизованных пользователей 
+  // Действие для авторизованных пользователей 
 
   if (onlyUnAuth && isAuthenticated) {
     return <Navigate to="/" replace />;

@@ -1,27 +1,22 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { IConstructorState } from '../slices/constructorSlice';
 
 //Селектор состояния конструктора
 
-export const constructorBurgerState = (state: RootState): IConstructorState =>
+export const constructorState = (state: RootState) =>
   state.constructorIngredients;
 
-export const selectConstructorBurgerBun = createSelector(
-  constructorBurgerState,
-  (constructorState) => constructorState.bun
-);
+export const selectConstructorBun = (state: RootState) =>
+  state.constructorIngredients.bun;
 
-export const selectConstructorBurgerIngredients = createSelector(
-  constructorBurgerState,
-  (constructorState) => constructorState.ingredients
-);
+export const selectConstructorIngredients = (state: RootState) =>
+  state.constructorIngredients.ingredients;
 
-export const selectConstructorAll = createSelector(
-  [selectConstructorBurgerBun, selectConstructorBurgerIngredients],
+export const selectConstructorBurger = createSelector(
+  [selectConstructorBun, selectConstructorIngredients],
   (bun, ingredients) => {
     if (!bun) return null;
 
-    return [bun.id, ...ingredients.map((item) => item.id), bun.id];
+    return [bun._id, ...ingredients.map((item) => item._id), bun._id];
   }
 );

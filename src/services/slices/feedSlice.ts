@@ -15,11 +15,11 @@ export const initialState: TFeed = {
   error: null
 }
 
-export const getFeed = createAsyncThunk(
+export const getFeeds = createAsyncThunk(
   'feed/getFeed',
   async () => {
-    const data = await getFeedsApi();
-    return data;
+    const response = await getFeedsApi();
+    return response;
   }
 )
 
@@ -29,18 +29,18 @@ const feedSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-    .addCase(getFeed.pending, (state) => {
+    .addCase(getFeeds.pending, (state) => {
       state.isLoading = true;
       state.error = null;
     })
-    .addCase(getFeed.fulfilled, (state, action) => {
+    .addCase(getFeeds.fulfilled, (state, action) => {
       state.isLoading = false;
       state.error = null;
       state.orders = action.payload.orders;
       state.total = action.payload.total;
       state.totalToday = action.payload.totalToday
     })
-    .addCase(getFeed.rejected, (state, action) => {
+    .addCase(getFeeds.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload as string
     })

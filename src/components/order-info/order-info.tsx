@@ -1,16 +1,30 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
-import { useSelector } from '../../services/store';
-import { selectOrderModalData } from '../../services/selectors/orderSelector';
-import { selectAllIngredients } from '../../services/selectors/ingredientsSelector';
+import { useDispatch, useSelector } from '../../services/store';
+import { selectIngredients } from '../../services/selectors/ingredientsSelector';
+import {
+  selectOrder,
+  selectOrderLoading
+} from '../../services/selectors/selectOrderSelector';
+import { useParams } from 'react-router-dom';
+import { getSelectOrder } from '../../services/slices/selectOrderSlice';
 
 export const OrderInfo: FC = () => {
-  const orderData = useSelector(selectOrderModalData);
-  const ingredients = useSelector(selectAllIngredients);
+  const dispatch = useDispatch();
 
-  /* Готовим данные для отображения */
+  const { number } = useParams();
+  const ingredients = useSelector(selectIngredients);
+  const orderData = useSelector(selectOrder);
+  const isLoading = useSelector(selectOrderLoading);
+
+  useEffect(() => {
+    if (number) {
+      dispatch(getSelectOrder(Number(number)));
+    }
+  }, [number, dispatch]);
+
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
@@ -52,7 +66,7 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo) {
+  if (isLoading || !orderInfo) {
     return <Preloader />;
   }
 

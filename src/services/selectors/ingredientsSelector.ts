@@ -1,22 +1,15 @@
-import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { IConstructorState } from '../slices/constructorSlice';
 
-// Селектор состояния ингрединентов
+// Селектор состояния ингредиентов
 
-export const ingredientsBurgerState = (state: RootState) => state.ingredients;
+export const ingredientsBurgerState = (state: RootState) => 
+  state.ingredients;
 
-export const selectAllIngredients = createSelector(
-  ingredientsBurgerState,
-  (ingredientsState) => ingredientsState.ingredients
-);
+export const selectIngredients = (state: RootState) =>
+  state.ingredients.ingredients;
 
-export const selectIngredientsLoading = createSelector(
-  ingredientsBurgerState,
-  (ingredientsState) => ingredientsState.isLoading
-);
+export const selectIngredientsLoading = (state: RootState) =>
+  state.ingredients.isLoading;
 
-export const selectIngredientsError = createSelector(
-  ingredientsBurgerState,
-  (ingredientsState) => ingredientsState.error
-);
+export const selectIngredientsError = (state: RootState) =>
+  state.ingredients.error;

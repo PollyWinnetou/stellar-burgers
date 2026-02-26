@@ -2,6 +2,8 @@ import {
   forgotPasswordApi,
   getUserApi,
   loginUserApi,
+  logoutApi,
+  refreshToken,
   registerUserApi,
   resetPasswordApi,
   TRegisterData,
@@ -9,6 +11,7 @@ import {
 } from '@api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TUser } from '@utils-types';
+import { deleteCookie, getCookie, setCookie } from '../../utils/cookie';
 
 export interface TUserAuth extends TUser {
   isAuthChecked: boolean;
@@ -26,8 +29,8 @@ export const initialState: TUserAuth = {
   isAuthenticated: false,
   isLoading: false,
   error: null,
-  passwordResetRequested: false, // запрос на сброс
-  passwordResetSuccess: false // сброшен ли успешно пароль
+  passwordResetRequested: false, 
+  passwordResetSuccess: false 
 };
 
 export const userRegister = createAsyncThunk(
@@ -42,7 +45,7 @@ export const userRegister = createAsyncThunk(
   ) => {
     try {
       const response = await registerUserApi({ email, name, password });
-      localStorage.setItem('accessToken', response.accessToken);
+      setCookie('accessToken', response.accessToken);
       localStorage.setItem('refreshToken', response.refreshToken);
 
       return response.user;
@@ -60,8 +63,8 @@ export const userLogin = createAsyncThunk(
   ) => {
     try {
       const response = await loginUserApi({ email, password });
-      console.log(response);
-      localStorage.setItem('accessToken', response.accessToken);
+
+      setCookie('accessToken', response.accessToken);
       localStorage.setItem('refreshToken', response.refreshToken);
 
       return response.user;
@@ -71,7 +74,7 @@ export const userLogin = createAsyncThunk(
   }
 );
 
-const userForgotPassword = createAsyncThunk(
+export const userForgotPassword = createAsyncThunk(
   'user/forgotPassword',
   async ({ email }: { email: string }, { rejectWithValue }) => {
     try {
@@ -83,7 +86,7 @@ const userForgotPassword = createAsyncThunk(
   }
 );
 
-const userResetPassword = createAsyncThunk(
+export const userResetPassword = createAsyncThunk(
   'user/resetPassword',
   async (data: { password: string; token: string }, { rejectWithValue }) => {
     try {
@@ -95,7 +98,7 @@ const userResetPassword = createAsyncThunk(
   }
 );
 
-const getUser = createAsyncThunk(
+export const getUser = createAsyncThunk(
   'user/getData',
   async (_, { rejectWithValue }) => {
     try {
@@ -107,7 +110,7 @@ const getUser = createAsyncThunk(
   }
 );
 
-const updateUser = createAsyncThunk(
+export const updateUser = createAsyncThunk(
   'user/update',
   async (userData: Partial<TRegisterData>, { rejectWithValue }) => {
     try {
@@ -116,6 +119,17 @@ const updateUser = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error);
     }
+  }
+);
+
+export const logoutUser = createAsyncThunk(
+  'user/logout',
+  async () => {
+    const response = await logoutApi();
+    if (!response.success) {
+      throw new Error('Ошибка при выходе');
+    }
+    return response;
   }
 );
 
@@ -134,8 +148,8 @@ const userSlice = createSlice({
       state.isAuthChecked = true;
       state.isLoading = false;
       state.error = null;
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      deleteCookie('accessToken');
+      deleteCookie('refreshToken');
     }
   },
   extraReducers: (builder) => {
@@ -248,7 +262,27 @@ const userSlice = createSlice({
       .addCase(updateUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
-      });
+      })
+
+      // Выход
+      .addCase(logoutUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.isAuthChecked = true;
+        state.email = '';
+        state.name = ''; 
+        state.error = null;
+        deleteCookie('accessToken');
+        localStorage.removeItem('refreshToken');
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
   }
 });
 

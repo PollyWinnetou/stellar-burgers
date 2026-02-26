@@ -4,16 +4,10 @@ import { useSelector } from '../../services/store';
 
 import { TTabMode } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
-import {
-  selectAllIngredients,
-  selectIngredientsError,
-  selectIngredientsLoading
-} from '../../services/selectors/ingredientsSelector';
+import { selectIngredients } from '../../services/selectors/ingredientsSelector';
 
 export const BurgerIngredients: FC = () => {
-  const ingredients = useSelector(selectAllIngredients);
-  const isLoading = useSelector(selectIngredientsLoading);
-  const error = useSelector(selectIngredientsError);
+  const ingredients = useSelector(selectIngredients);
 
   const buns = ingredients.filter((ingredients) => ingredients.type === 'bun');
   const mains = ingredients.filter(

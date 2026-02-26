@@ -3,24 +3,38 @@ import { FeedUI } from '@ui-pages';
 import { TOrder } from '@utils-types';
 import { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from '../../services/store';
-import { selectFeedOrders } from '../../services/selectors/feedSelector';
-import { getFeed } from '../../services/slices/feedSlice';
+import {
+  selectFeedError,
+  selectFeedLoading,
+  selectFeedOrders
+} from '../../services/selectors/feedSelector';
+import { getFeeds } from '../../services/slices/feedSlice';
 
 export const Feed: FC = () => {
   const dispatch = useDispatch();
+  
   const orders: TOrder[] = useSelector(selectFeedOrders);
+  const isLoading = useSelector(selectFeedLoading);
+  const error = useSelector(selectFeedError);
 
   const handleGetFeeds = () => {
-    dispatch(getFeed());
-  }
+    dispatch(getFeeds());
+  };
 
   useEffect(() => {
     handleGetFeeds();
-  }, []);
+  }, [dispatch]);
 
-  if (!orders.length) {
+  if (isLoading) {
     return <Preloader />;
   }
+  if (error) {
+    return <div>Ошибка: {error}</div>;
+  }
 
-  <FeedUI orders={orders} handleGetFeeds={() => { handleGetFeeds }} />;
+  if (!orders || orders.length === 0) {
+    return <div>Нет заказов</div>;
+  }
+
+  return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
 };
