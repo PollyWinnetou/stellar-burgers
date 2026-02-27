@@ -4,8 +4,8 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { selectIsAuthenticated } from '../../services/selectors/userSelector';
 
 type ProtectedRouteProps = {
-  children: ReactElement; // Компонент, который нужно защитить
-  onlyUnAuth?: boolean; // Флаг: true - только для неавторизованных
+  children: ReactElement;
+  onlyUnAuth?: boolean;
 };
 
 export const ProtectedRoute = ({ children, onlyUnAuth = false }: ProtectedRouteProps) => {
@@ -14,8 +14,15 @@ export const ProtectedRoute = ({ children, onlyUnAuth = false }: ProtectedRouteP
 
   // Действие для авторизованных пользователей 
 
-  if (onlyUnAuth && isAuthenticated) {
-    return <Navigate to="/" replace />;
+  if (onlyUnAuth) {
+
+    if (isAuthenticated) {
+      const from = location.state?.from?.pathname || '/';
+      
+      return <Navigate to={from} />;
+    }
+
+    return children;
   }
 
   // Действие для неавторизованных пользователей 
