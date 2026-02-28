@@ -9,8 +9,7 @@ import { FC } from 'react';
 import { selectIngredientsLoading } from '../../services/selectors/ingredientsSelector';
 
 export const ConstructorPage: FC = () => {
-  
-  const isIngredientsLoading = useSelector(selectIngredientsLoading);;
+  const isIngredientsLoading = useSelector(selectIngredientsLoading);
 
   return (
     <>

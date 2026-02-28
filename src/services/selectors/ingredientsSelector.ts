@@ -2,8 +2,7 @@ import { RootState } from '../store';
 
 // Селектор состояния ингредиентов
 
-export const ingredientsBurgerState = (state: RootState) => 
-  state.ingredients;
+export const ingredientsBurgerState = (state: RootState) => state.ingredients;
 
 export const selectIngredients = (state: RootState) =>
   state.ingredients.ingredients;

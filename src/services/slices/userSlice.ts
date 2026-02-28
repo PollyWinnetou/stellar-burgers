@@ -29,8 +29,8 @@ export const initialState: TUserAuth = {
   isAuthenticated: false,
   isLoading: false,
   error: null,
-  passwordResetRequested: false, 
-  passwordResetSuccess: false 
+  passwordResetRequested: false,
+  passwordResetSuccess: false
 };
 
 export const userRegister = createAsyncThunk(
@@ -74,6 +74,40 @@ export const userLogin = createAsyncThunk(
   }
 );
 
+export const checkUserAuth = createAsyncThunk(
+  'user/checkAuth',
+  async (_, { rejectWithValue }) => {
+    const accessToken = getCookie('accessToken');
+
+    if (!accessToken) {
+      return rejectWithValue('Токена нет');
+    }
+
+    try {
+      const response = await getUserApi();
+
+      return response.user;
+    } catch (error) {
+      try {
+        const refreshTokenValue = localStorage.getItem('refreshToken');
+        if (refreshTokenValue) {
+          const refreshResponse = await refreshToken();
+
+          setCookie('accessToken', refreshResponse.accessToken);
+          localStorage.setItem('refreshToken', refreshResponse.refreshToken);
+
+          const userResponse = await getUserApi();
+          return userResponse.user;
+        }
+      } catch (refreshError) {
+        deleteCookie('accessToken');
+        localStorage.removeItem('refreshToken');
+      }
+      return rejectWithValue('Ошибка аутентификации');
+    }
+  }
+);
+
 export const userForgotPassword = createAsyncThunk(
   'user/forgotPassword',
   async ({ email }: { email: string }, { rejectWithValue }) => {
@@ -98,18 +132,6 @@ export const userResetPassword = createAsyncThunk(
   }
 );
 
-export const getUser = createAsyncThunk(
-  'user/getData',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await getUserApi();
-      return response.user;
-    } catch (error) {
-      return rejectWithValue(error);
-    }
-  }
-);
-
 export const updateUser = createAsyncThunk(
   'user/update',
   async (userData: Partial<TRegisterData>, { rejectWithValue }) => {
@@ -124,12 +146,20 @@ export const updateUser = createAsyncThunk(
 
 export const logoutUser = createAsyncThunk(
   'user/logout',
-  async () => {
-    const response = await logoutApi();
-    if (!response.success) {
-      throw new Error('Ошибка при выходе');
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await logoutApi();
+      if (response.success) {
+        localStorage.removeItem('refreshToken');
+        deleteCookie('accessToken');
+
+        return response;
+      } else {
+        return rejectWithValue('Ошибка при выходе');
+      }
+    } catch (error) {
+      return rejectWithValue('Сетевая ошибка');
     }
-    return response;
   }
 );
 
@@ -148,8 +178,6 @@ const userSlice = createSlice({
       state.isAuthChecked = true;
       state.isLoading = false;
       state.error = null;
-      deleteCookie('accessToken');
-      deleteCookie('refreshToken');
     }
   },
   extraReducers: (builder) => {
@@ -230,21 +258,21 @@ const userSlice = createSlice({
 
       // Получение даннных пользователя
 
-      .addCase(getUser.pending, (state) => {
+      .addCase(checkUserAuth.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(getUser.fulfilled, (state, action) => {
+      .addCase(checkUserAuth.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = true;
         state.email = action.payload.email;
         state.name = action.payload.name;
         state.isAuthChecked = true;
       })
-      .addCase(getUser.rejected, (state, action) => {
+      .addCase(checkUserAuth.rejected, (state) => {
         state.isLoading = false;
         state.isAuthenticated = false;
-        state.error = action.payload as string;
+        state.error = null;
         state.isAuthChecked = true;
       })
 
@@ -274,7 +302,7 @@ const userSlice = createSlice({
         state.isAuthenticated = false;
         state.isAuthChecked = true;
         state.email = '';
-        state.name = ''; 
+        state.name = '';
         state.error = null;
         deleteCookie('accessToken');
         localStorage.removeItem('refreshToken');
@@ -282,7 +310,7 @@ const userSlice = createSlice({
       .addCase(logoutUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
-      })
+      });
   }
 });
 

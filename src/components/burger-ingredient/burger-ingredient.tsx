@@ -1,6 +1,6 @@
 import { FC, memo, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
 
 import { BurgerIngredientUI } from '@ui';
 import { TBurgerIngredientProps } from './type';
@@ -12,14 +12,9 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
     const dispatch = useDispatch();
     const location = useLocation();
 
-    const handleAdd = useCallback(() => {
-      const constructorIngredient = {
-        ...ingredient,
-        id: uuidv4()
-      };
-
-      dispatch(addIngredient(constructorIngredient))
-    }, [dispatch, ingredient]);
+    const handleAdd = () => {
+      dispatch(addIngredient(ingredient));
+    };
 
     return (
       <BurgerIngredientUI

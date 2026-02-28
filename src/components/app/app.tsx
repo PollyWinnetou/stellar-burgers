@@ -18,6 +18,7 @@ import { useEffect } from 'react';
 import { useDispatch } from '../../services/store';
 import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 import { ProtectedRoute } from '../protected-route';
+import { checkUserAuth } from '../../services/slices/userSlice';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -27,13 +28,13 @@ const App = () => {
 
   useEffect(() => {
     dispatch(fetchIngredients());
+    dispatch(checkUserAuth());
   }, [dispatch]);
-  ``;
 
   return (
     <div className={styles.app}>
       <AppHeader />
-      <Routes>
+      <Routes location={background || location}>
         {/* Основные маршруты */}
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />
@@ -105,7 +106,7 @@ const App = () => {
           <Route
             path='/feed/:number'
             element={
-              <Modal title='Детали заказа' onClose={() => navigate('/feed')}>
+              <Modal onClose={() => navigate('/feed')}>
                 <OrderInfo />
               </Modal>
             }
@@ -122,10 +123,7 @@ const App = () => {
             path='/profile/orders/:number'
             element={
               <ProtectedRoute>
-                <Modal
-                  title='Детали заказа'
-                  onClose={() => navigate('/profile/orders')}
-                >
+                <Modal onClose={() => navigate('/profile/orders')}>
                   <OrderInfo />
                 </Modal>
               </ProtectedRoute>

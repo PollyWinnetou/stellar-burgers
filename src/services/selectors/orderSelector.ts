@@ -2,8 +2,7 @@ import { RootState } from '../store';
 
 // Селектор состояния заказа
 
-export const orderState = (state: RootState) => 
-  state.order;
+export const orderState = (state: RootState) => state.order;
 
 export const selectOrderRequest = (state: RootState) =>
   state.order.orderRequest;

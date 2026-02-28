@@ -8,26 +8,28 @@ type ProtectedRouteProps = {
   onlyUnAuth?: boolean;
 };
 
-export const ProtectedRoute = ({ children, onlyUnAuth = false }: ProtectedRouteProps) => {
+export const ProtectedRoute = ({
+  children,
+  onlyUnAuth = false
+}: ProtectedRouteProps) => {
   const location = useLocation();
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
-  // Действие для авторизованных пользователей 
+  // Действие для авторизованных пользователей
 
   if (onlyUnAuth) {
-
     if (isAuthenticated) {
       const from = location.state?.from?.pathname || '/';
-      
+
       return <Navigate to={from} />;
     }
 
     return children;
   }
 
-  // Действие для неавторизованных пользователей 
+  // Действие для неавторизованных пользователей
   if (!onlyUnAuth && !isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to='/login' state={{ from: location }} replace />;
   }
 
   return children;

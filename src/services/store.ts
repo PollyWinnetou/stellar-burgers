@@ -13,7 +13,7 @@ import {
   useSelector as selectorHook
 } from 'react-redux';
 
-const rootReducer =  combineReducers({
+const rootReducer = combineReducers({
   ingredients: ingredientsReducer,
   constructorIngredients: constructorReducer,
   order: orderReducer,

@@ -12,7 +12,7 @@ import { getFeeds } from '../../services/slices/feedSlice';
 
 export const Feed: FC = () => {
   const dispatch = useDispatch();
-  
+
   const orders: TOrder[] = useSelector(selectFeedOrders);
   const isLoading = useSelector(selectFeedLoading);
   const error = useSelector(selectFeedError);
