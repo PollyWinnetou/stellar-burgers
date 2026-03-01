@@ -21,9 +21,7 @@ import {
   selectUserData
 } from '../../services/selectors/userSelector';
 
-import { clearOrderModal, createOrder } from '../../services/slices/orderSlice';
-
-import { clearConstructor } from '../../services/slices/constructorSlice';
+import { createOrder, removeModalData } from '../../services/slices/orderSlice';
 
 export const BurgerConstructor: FC = () => {
   const navigate = useNavigate();
@@ -54,8 +52,7 @@ export const BurgerConstructor: FC = () => {
   };
 
   const closeOrderModal = () => {
-    dispatch(clearOrderModal());
-    dispatch(clearConstructor());
+    dispatch(removeModalData());
   };
 
   const price = useMemo(

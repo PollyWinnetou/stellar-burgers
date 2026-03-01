@@ -157,7 +157,7 @@ export const logoutUser = createAsyncThunk(
       } else {
         return rejectWithValue('Ошибка при выходе');
       }
-    } catch (error) {
+    } catch (_) {
       return rejectWithValue('Сетевая ошибка');
     }
   }
@@ -170,14 +170,6 @@ const userSlice = createSlice({
     setUser: (state, action) => {
       state.email = action.payload.email;
       state.name = action.payload.name;
-    },
-    logout: (state) => {
-      state.email = '';
-      state.name = '';
-      state.isAuthenticated = false;
-      state.isAuthChecked = true;
-      state.isLoading = false;
-      state.error = null;
     }
   },
   extraReducers: (builder) => {
@@ -304,8 +296,6 @@ const userSlice = createSlice({
         state.email = '';
         state.name = '';
         state.error = null;
-        deleteCookie('accessToken');
-        localStorage.removeItem('refreshToken');
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.isLoading = false;

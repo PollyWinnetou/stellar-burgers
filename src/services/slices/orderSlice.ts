@@ -1,6 +1,7 @@
 import { orderBurgerApi } from '@api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TOrder } from '@utils-types';
+import { resetConstructor } from './constructorSlice';
 
 export interface IOrderState {
   orderRequest: boolean;
@@ -17,30 +18,24 @@ export const initialState: IOrderState = {
 };
 
 export const createOrder = createAsyncThunk(
-  'order/fetchOrder',
-  async (ingredientsOrder: string[]) => {
-    const response = await orderBurgerApi(ingredientsOrder);
-
-    return response.order;
-  }
+  'order/createOrder',
+  (orderData: string[], { dispatch }) =>
+    orderBurgerApi(orderData).then(({ order }) => {
+      dispatch(resetConstructor());
+      return order;
+    })
 );
 
 const OrderSlice = createSlice({
   name: 'order',
   initialState,
   reducers: {
-    clearOrderModal: (state) => {
-      state.orderModalData = null;
-      state.orderRequest = false;
-      state.orderSuccess = false;
-      state.error = null;
-    }
+    removeModalData: () => initialState
   },
   extraReducers: (builder) => {
     builder
       .addCase(createOrder.pending, (state) => {
         state.orderRequest = true;
-        state.orderModalData = null;
         state.orderSuccess = false;
         state.error = null;
       })
@@ -58,6 +53,6 @@ const OrderSlice = createSlice({
   }
 });
 
-export const { clearOrderModal } = OrderSlice.actions;
+export const { removeModalData } = OrderSlice.actions;
 
 export default OrderSlice.reducer;
