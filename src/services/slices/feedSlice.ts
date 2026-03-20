@@ -39,7 +39,7 @@ const feedSlice = createSlice({
       })
       .addCase(getFeeds.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.error = action.error.message || 'Ошибка загрузки';
       });
   }
 });
