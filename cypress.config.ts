@@ -9,6 +9,8 @@ module.exports = defineConfig({
     baseUrl: 'http://localhost:4000',
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     fixturesFolder: 'cypress/fixtures',
-    setupNodeEvents(on, config) {},
+    setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {
+      return config;
+    },
   },
 });

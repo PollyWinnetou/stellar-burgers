@@ -1,4 +1,5 @@
-import type {} from 'cypress';
+/// <reference types="cypress" />
+/// <reference path="../support/index.d.ts" />
 
 describe('Конструктор бургеров', () => {
   beforeEach(() => {
@@ -11,31 +12,23 @@ describe('Конструктор бургеров', () => {
   });
 
   it('Список ингредиентов', () => {
-    cy.get('[data-cy="ingredient-bun-643d69a5c3f7b9001cfa093c"]')
-      .scrollIntoView()
-      .should('be.visible');
-
-    cy.get('[data-cy="ingredient-main-643d69a5c3f7b9001cfa0941"]')
-      .scrollIntoView()
-      .should('be.visible');
-
-    cy.get('[data-cy="ingredient-sauce-643d69a5c3f7b9001cfa0942"]')
-      .scrollIntoView()
-      .should('be.visible');
+    cy.getIngredientBun().scrollIntoView().should('be.visible');
+    cy.getIngredientMain().scrollIntoView().should('be.visible');
+    cy.getIngredientSauce().scrollIntoView().should('be.visible');
   });
 
-  it('должен добавлять ингредиенты в конструктор', () => {
-    cy.get('[data-cy="ingredient-bun-643d69a5c3f7b9001cfa093c"]')
+  it('Должен добавлять ингредиенты в конструктор', () => {
+    cy.getIngredientBun()
       .scrollIntoView()
       .find('button')
       .click();
 
-    cy.get('[data-cy="ingredient-main-643d69a5c3f7b9001cfa0941"]')
+    cy.getIngredientMain()
       .scrollIntoView()
       .find('button')
       .click();
 
-    cy.get('[data-cy="ingredient-sauce-643d69a5c3f7b9001cfa0942"]')
+    cy.getIngredientSauce()
       .scrollIntoView()
       .find('button')
       .click();
@@ -60,25 +53,25 @@ describe('Модальные окна ингредиентов', () => {
     cy.visit('/');
     cy.wait('@getIngredients');
 
-    cy.get('[data-cy="ingredient-bun-643d69a5c3f7b9001cfa093c"]')
+    cy.getIngredientBun()
       .scrollIntoView()
       .should('be.visible');
 
-    cy.get('[data-cy="ingredient-main-643d69a5c3f7b9001cfa0941"]')
+    cy.getIngredientMain()
       .scrollIntoView()
       .should('be.visible');
 
-    cy.get('[data-cy="ingredient-sauce-643d69a5c3f7b9001cfa0942"]')
+    cy.getIngredientSauce()
       .scrollIntoView()
       .should('be.visible');
   });
 
   it('Открытие модального окна ингредиента', () => {
-    cy.get('[data-cy="ingredient-bun-643d69a5c3f7b9001cfa093c"]')
+    cy.getIngredientBun()
       .find('a')
       .click();
 
-    cy.get('[data-cy="modal"]').within(() => {
+    cy.getModal().within(() => {
       cy.get('[data-cy="modal-title"]').should('be.visible');
       cy.contains('Краторная булка N-200i').should('be.visible');
       cy.get('img').should('exist').should('be.visible');
@@ -96,11 +89,11 @@ describe('Модальные окна ингредиентов', () => {
   });
 
   it('Закрытие модального окна по клику на крестик', () => {
-    cy.get('[data-cy="ingredient-bun-643d69a5c3f7b9001cfa093c"]')
+    cy.getIngredientBun()
       .find('a')
       .click();
 
-    cy.get('[data-cy="modal"]')
+    cy.getModal()
       .should('be.visible')
       .within(() => {
         cy.contains('Краторная булка N-200i').should('be.visible');
@@ -108,27 +101,27 @@ describe('Модальные окна ингредиентов', () => {
 
     cy.get('[data-cy="modal-close"]').click();
 
-    cy.get('[data-cy="modal"]').should('not.exist');
-    cy.get('[data-cy="modal-overlay"]').should('not.exist');
+    cy.getModal().should('not.exist');
+    cy.getOverlay().should('not.exist');
     cy.url().should('eq', Cypress.config().baseUrl + '/');
   });
 
   it('Закрытие модального окна по клику на оверлей', () => {
-    cy.get('[data-cy="ingredient-bun-643d69a5c3f7b9001cfa093c"]')
+    cy.getIngredientBun()
       .find('a')
       .click();
 
-    cy.get('[data-cy="modal-overlay"]').should('exist');
-    cy.get('[data-cy="modal"]')
+    cy.getOverlay().should('exist');
+    cy.getModal()
       .should('be.visible')
       .within(() => {
         cy.contains('Краторная булка N-200i').should('be.visible');
       });
 
-    cy.get('[data-cy="modal-overlay"]').click({ force: true });
+    cy.getOverlay().click({ force: true });
 
-    cy.get('[data-cy="modal"]').should('not.exist');
-    cy.get('[data-cy="modal-overlay"]').should('not.exist');
+    cy.getModal().should('not.exist');
+    cy.getOverlay().should('not.exist');
     cy.url().should('eq', Cypress.config().baseUrl + '/');
   });
 });
@@ -165,17 +158,17 @@ describe('Создание заказа', () => {
   });
 
   it('Успешное создание заказа', () => {
-    cy.get('[data-cy="ingredient-bun-643d69a5c3f7b9001cfa093c"]')
+    cy.getIngredientBun()
       .scrollIntoView()
       .find('button')
       .click();
 
-    cy.get('[data-cy="ingredient-main-643d69a5c3f7b9001cfa0941"]')
+    cy.getIngredientMain()
       .scrollIntoView()
       .find('button')
       .click();
 
-    cy.get('[data-cy="ingredient-sauce-643d69a5c3f7b9001cfa0942"]')
+    cy.getIngredientSauce()
       .scrollIntoView()
       .find('button')
       .click();
